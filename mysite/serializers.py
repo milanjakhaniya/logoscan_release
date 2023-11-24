@@ -2,15 +2,11 @@
 from rest_framework import serializers
 from .models import Video,Video1,Video2
 
-
-
-
-
-from rest_framework import serializers
-
 class ApiKeySerializer(serializers.Serializer):
     api_key = serializers.CharField()
-
+    product = serializers.CharField()
+    brand = serializers.CharField()
+    category = serializers.CharField()
 
 class VideoSerializer(serializers.ModelSerializer):
     class Meta:

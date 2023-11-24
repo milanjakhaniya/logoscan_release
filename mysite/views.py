@@ -37,7 +37,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from bson.objectid import ObjectId
 
 from io import BytesIO
-
+from .helpers import check_api_key
 
 ######## new project start ##############
 from tensorflow.keras.preprocessing import image
@@ -332,9 +332,22 @@ class VideoUploadViewFrames(View):
                 return JsonResponse({'error': serializer.errors}, status=400)
             # Access validated data using serializer.validated_data
             api_key = serializer.validated_data['api_key']
+            category = serializer.validated_data['category']
+            brand = serializer.validated_data['brand']
+            product = serializer.validated_data['product']
+
+            res = check_api_key(api_key)
+            if res != "success":
+                return JsonResponse(
+                    {"success": False, "message": res,
+                     "data": []},
+                    status=status.HTTP_404_NOT_FOUND)
+
+
+
             features = []
             img_paths = []
-            present_dir = '/your/present/directory'  # Replace with your actual present directory
+            present_dir =os.path.dirname(os.path.abspath(__file__))  # Replace with your actual present directory
             img = f'{present_dir}/img'
 
             if 'video' in request.FILES:
