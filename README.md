@@ -1,107 +1,103 @@
-## Libraries Used
-
-### 1. OpenCV (cv2)
-
-- **Purpose**: OpenCV (Open Source Computer Vision) is a powerful open-source computer vision and machine learning library.
-- **Usage**: Used for image and video processing tasks, such as reading and manipulating images, capturing and processing video frames, image filtering, and computer vision applications.
-
-### 2. Django Rest Framework
-
-- **Purpose**: Django Rest Framework (DRF) is a toolkit for building Web APIs in Django.
-- **Components**:
-  - **FileUploadParser**: Handles file uploads in API views.
-  - **Video, Video1**: Django models representing database tables for video-related data.
-  - **VideoSerializer, VideoSerializer1, VideoSerializer2**: Serializers that convert complex data types (e.g., models) to JSON for API communication.
-- **Usage**: Creates RESTful APIs for handling video data, including uploading, retrieving, and serializing video-related information.
-
-### 3. pathlib
-
-- **Purpose**: The `pathlib` module provides an object-oriented interface for working with filesystem paths.
-- **Usage**: Used for handling file paths and directories in a clean and platform-independent way.
-
-### 4. PIL (Python Imaging Library)
-
-- **Purpose**: PIL is a library for opening, manipulating, and saving various image file formats.
-- **Usage**: Used for image processing tasks, especially if the application involves working with images.
-
-### 5. gridfs
-
-- **Purpose**: `gridfs` is a specification for storing and retrieving large files in MongoDB.
-- **Usage**: Interacts with MongoDB to store and retrieve video files efficiently.
-
-### 6. NumPy
-
-- **Purpose**: NumPy is a powerful library for numerical operations in Python.
-- **Usage**: Used for numerical operations, especially if there is image or video data involved.
-
-
-###
-
-Certainly! Below is a brief introduction and a README.md for the two API views provided:
-
-### 1. VideoUploadViewFrames API
-
-**Introduction:**
-The `VideoUploadViewFrames` API is designed to handle video uploads, extract frames, and perform feature extraction on those frames. It then compares the extracted features with pre-existing features stored in a MongoDB collection. The API utilizes OpenCV for video processing, Django Rest Framework for API handling, and MongoDB (GridFS) for efficient storage and retrieval of video files and features.
-
-**Usage:**
-- Endpoint: `/VideoUploadViewFrames/`
-- Method: POST
-
-**Functionality:**
-1. Accepts a video file upload with additional metadata (category, product, brand).
-2. Processes the video, extracts frames, and performs feature extraction on each frame.
-3. Compares the extracted features with pre-existing features in the MongoDB collection.
-4. Returns a JSON response containing information about matching images and their probabilities.
-
-### 2. LogoImageUploadView API
-
-**Introduction:**
-The `LogoImageUploadView` API is responsible for handling the upload of logo images in an administrative context. It saves the uploaded images, extracts features, and stores them in MongoDB (GridFS). This API is equipped with features for checking if features for an image already exist, and it returns appropriate responses based on the existence of features.
-
-**Usage:**
-- Endpoint: `/logo-upload-image/`
-- Method: POST
-
-**Functionality:**
-1. Accepts an image file upload with additional metadata (category, product, brand, flag).
-2. Saves the uploaded image and extracts features from it.
-3. Checks if features for the image already exist in the MongoDB collection.
-4. If features do not exist, the image is stored in GridFS, and features are stored in MongoDB.
-5. Returns a JSON response indicating the success of the image and feature upload.
-
-### README.md
-
 ```markdown
-# Video Processing and Image Upload APIs
+# Dowell LogoScan API's
 
-This project includes two APIs for video processing and image uploads. The APIs leverage OpenCV for video processing, Django Rest Framework for API handling, and MongoDB (GridFS) for efficient storage and retrieval of video files and features.
+## Postman Documentation
+[Read the documentation on Postman](https://documenter.getpostman.com/view/29895764/2s9YkgC4qX)
 
-## 1. VideoUploadViewFrames API
+## Video Upload and Logo Image Upload API
 
-### Usage
+This API provides endpoints for uploading videos and logo images, extracting features, and performing image recognition.
 
-- Endpoint: `/VideoUploadViewFrames/`
-- Method: POST
+### Video Upload Endpoint
 
-### Functionality
+#### Upload Video and Perform Image Recognition
 
-1. Accepts a video file upload with additional metadata (category, product, brand).
-2. Processes the video, extracts frames, and performs feature extraction on each frame.
-3. Compares the extracted features with pre-existing features in the MongoDB collection.
-4. Returns a JSON response containing information about matching images and their probabilities.
+- **Endpoint:**
+  ```markdown
+  POST https://uxlivinglab100110.pythonanywhere.com/VideoUploadViewFrames/
+  ```
 
-## 2. LogoImageUploadView API
+- **Payload:**
+  - `api_key`: Your Dowell API Key
+  - `category`: Category of the video
+  - `brand`: Brand of the video
+  - `product`: Product of the video
+  - `video`: Video file (MP4 format, size < 30MB, duration <= 10.1 seconds)
 
-### Usage
+- **Example (Postman):**
+  1. Open Postman and set the request type to `POST`.
+  2. Enter the endpoint URL: `https://uxlivinglab100110.pythonanywhere.com/VideoUploadViewFrames/`.
+  3. In the `Body` tab, select `form-data`.
+  4. Add the following key-value pairs:
+     - `api_key`: Your Dowell API Key
+     - `category`: YourCategory
+     - `brand`: YourBrand
+     - `product`: YourProduct
+     - `video`: [Select your video file]
 
-- Endpoint: `/logo-upload-image/`
-- Method: POST
+- **Example (Python - using `requests` library):**
+  ```python
+  import requests
 
-### Functionality
+  url = "https://uxlivinglab100110.pythonanywhere.com/VideoUploadViewFrames/"
+  files = {'video': open(r'C:\Users\user\Downloads\video.mp4', 'rb')}
+  data = {
+      'api_key': 'Your Dowell API Key',
+      'category': 'YourCategory',
+      'brand': 'YourBrand',
+      'product': 'YourProduct'
+  }
 
-1. Accepts an image file upload with additional metadata (category, product, brand, flag).
-2. Saves the uploaded image and extracts features from it.
-3. Checks if features for the image already exist in the MongoDB collection.
-4. If features do not exist, the image is stored in GridFS, and features are stored in MongoDB.
-5. Returns a JSON response indicating the success of the image and feature upload.
+  response = requests.post(url, files=files, data=data)
+  print(response.json())
+  ```
+
+### Logo Image Upload Endpoint
+
+#### Upload Logo Image and Extract Features
+
+- **Endpoint:**
+  ```markdown
+  POST https://uxlivinglab100110.pythonanywhere.com/logo-upload-image/
+  ```
+
+- **Payload:**
+  - `api_key`: Your Dowell API Key
+  - `category`: Category of the image
+  - `brand`: Brand of the image
+  - `product`: Product of the image
+  - `flag`: Flag for identification
+  - `image`: Logo image file
+
+- **Example (Postman):**
+  1. Open Postman and set the request type to `POST`.
+  2. Enter the endpoint URL: `https://uxlivinglab100110.pythonanywhere.com/logo-upload-image/`.
+  3. In the `Body` tab, select `form-data`.
+  4. Add the following key-value pairs:
+     - `api_key`: Your Dowell API Key
+     - `category`: YourCategory
+     - `brand`: YourBrand
+     - `product`: YourProduct
+     - `flag`: YourFlag
+     - `image`: [Select your logo image file]
+
+- **Example (Python - using `requests` library):**
+  ```python
+  import requests
+
+  url = "https://uxlivinglab100110.pythonanywhere.com/logo-upload-image/"
+  files = {'image': open(r'c:\Users\Downloads\wallpaper.jpg', 'rb')}
+  data = {
+      'api_key': 'Your Dowell API Key',
+      'category': 'YourCategory',
+      'brand': 'YourBrand',
+      'product': 'YourProduct',
+      'flag': 'YourFlag'
+  }
+
+  response = requests.post(url, files=files, data=data)
+  print(response.json())
+  ```
+
+Remember to replace placeholders like `Your Dowell API Key`, `YourCategory`, `YourBrand`, `YourProduct`, and others with your actual values.
+```
